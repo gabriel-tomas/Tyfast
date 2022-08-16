@@ -1,4 +1,3 @@
-from turtle import xcor
 import pygame
 
 pygame.init()
