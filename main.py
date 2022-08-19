@@ -62,10 +62,16 @@ def move_bg():
 
     while True:
         print(y_bg1)
-        y_bg2 += 3
-        sleep(0.01)
-        if y_bg2 == SCREEN_Y:
-            y_bg2 = 0
+        if game_run:
+            y_bg1 += 1
+            sleep(0.01)
+            if y_bg1 == SCREEN_Y:
+                y_bg1 = 0
+        elif not game_run:
+            y_bg2 += 1
+            sleep(0.01)
+            if y_bg2 == SCREEN_Y:
+                y_bg2 = 0
                 
 Thread(target=move_bg).start()
 
@@ -96,7 +102,6 @@ def time_run():
         
 #run game
 while True:
-    
     if not game_run:
         screen.fill((0,0,0))
         screen.blit(background_start, (0,y_bg2))
@@ -120,11 +125,8 @@ while True:
         pygame.display.flip()
     elif game_run:
         screen.fill((0,0,0))
-        screen.blit(background_start, (0,y_bg2))
-        screen.blit(background_start1, (0,y_bg2 - SCREEN_Y))
-        #screen.fill((0,0,0))
-        #screen.blit(bg1, (0, y_bg1))
-        #screen.blit(bg1, (0, y_bg1 - SCREEN_Y))
+        screen.blit(bg1, (0, y_bg1))
+        screen.blit(bg1, (0, y_bg1 - SCREEN_Y))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
