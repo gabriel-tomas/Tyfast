@@ -1,11 +1,11 @@
 from threading import Thread
-import pygame
 from time import sleep
 from english_words import english_words_set
 from random import choice
-import sys
 from update import update
 from saveload import save, load, save_score
+import sys, pygame, webbrowser
+
 
 
 pygame.init()
@@ -18,6 +18,7 @@ if "display" in load():
         screen = pygame.display.set_mode([SCREEN_X, SCREEN_Y])
 else:
     SCREEN_X, SCREEN_Y = display_info.current_w, display_info.current_h
+    fullscreen = False
     screen = pygame.display.set_mode([SCREEN_X, SCREEN_Y])
 
 if "difficulty" in load():
@@ -44,6 +45,8 @@ font_options = pygame.font.Font("assets/font/font.otf", 30)
 font_box_choice = pygame.font.Font("assets/font/font.otf", 25)
 font_last_max_points = pygame.font.Font("assets/font/font.otf", 30)
 font_about_window = pygame.font.Font("assets/font/font.otf", 25)
+audio_click_button = pygame.mixer.Sound("assets/audios/options-button.wav")
+audio_click_button_game = pygame.mixer.Sound("assets/audios/click-button.wav")
 input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
 word = None
 option_state = False
@@ -78,6 +81,7 @@ def max_score(difficulty):
 
 
 def res_set(width=None, height=None, fullscreen=False):
+    audio_click_button.play()
     dict_save["display"] = [width, height, fullscreen]
     save(dict_save, "config.json")
     if fullscreen:
@@ -150,6 +154,7 @@ def difficulty_set(collid=False):
 
     if collid:
         if option_button_box_easy_rect.collidepoint(event.pos):
+            audio_click_button.play()
             difficulty = "easy"
             time_to_same = difficulty_time[difficulty]
             option_button_box_easy = pygame.image.load("assets/buttons/button-windows-options/mark-box.png")
@@ -160,6 +165,7 @@ def difficulty_set(collid=False):
             option_button_box_hard = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
             option_button_box_hard = pygame.transform.scale(option_button_box_hard, (40,40))
         if option_button_box_medium_rect.collidepoint(event.pos):
+            audio_click_button.play()
             difficulty = "medium"
             time_to_same = difficulty_time[difficulty]
             option_button_box_medium = pygame.image.load("assets/buttons/button-windows-options/mark-box.png")
@@ -170,6 +176,7 @@ def difficulty_set(collid=False):
             option_button_box_hard = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
             option_button_box_hard = pygame.transform.scale(option_button_box_hard, (40,40))
         if option_button_box_hard_rect.collidepoint(event.pos):
+            audio_click_button.play()
             difficulty = "hard"
             time_to_same = difficulty_time[difficulty]
             option_button_box_hard = pygame.image.load("assets/buttons/button-windows-options/mark-box.png")
@@ -204,6 +211,7 @@ def loading_time():
     loading = False
     input_active = True
     word = choice(list(english_words_set))
+    #credits = https://patrickdearteaga.com/royalty-free-music/full-list/
     Thread(target=time_run).start()
 
 def txt_str_loading():
@@ -267,6 +275,8 @@ def time_run():
             break
         
 #run game
+txt_about_github = font_about_window.render("GitHub: https://github.com/ratohg", True, (51, 51, 51))
+txt_about_replit = font_about_window.render("Replit: https://replit.com/@ratohg", True, (51, 51, 51))
 while True:
     if game_run == False and loading == False:
         screen.fill((0,0,0))
@@ -282,17 +292,26 @@ while True:
                     loading = True
                     Thread(target=loading_time).start()
                     Thread(target=txt_str_loading).start()
-                if rect_options_menu.collidepoint(event.pos):
+                    pygame.mixer.Sound.play(audio_click_button)
+                if rect_options_menu.collidepoint(event.pos) and option_state == False:
                     option_state = True
+                    pygame.mixer.Sound.play(audio_click_button)
                 if exit_option_window_rect.collidepoint(event.pos):
                     option_state = False
                     about_state = False
-                if rect_about_menu.collidepoint(event.pos) and option_state == False:
+                    pygame.mixer.Sound.play(audio_click_button)
+                if rect_about_menu.collidepoint(event.pos) and option_state == False and about_state == False:
                     about_state = True
+                    pygame.mixer.Sound.play(audio_click_button)
                 if option_state and about_state == False:
                     difficulty_set(True)
                     resolution_set(True)
-
+                if about_state:
+                    if txt_about_replit.get_rect(center=(about_window_rect.x + 210, about_window_rect.y + 303)).collidepoint(event.pos):
+                        webbrowser.open("https://github.com/ratohg")
+                    elif txt_about_replit.get_rect(center=(about_window_rect.x + 210, about_window_rect.y + 316)).collidepoint(event.pos):
+                        webbrowser.open("https://replit.com/@ratohg")
+                    
         txt_heading = font_heading.render("Tyfast", True, (82, 39, 39))
         screen.blit(start_menu, rect_start_menu)
         screen.blit(options_menu, rect_options_menu)
@@ -339,9 +358,9 @@ while True:
             screen.blit(exit_option_window, (about_window_rect.x + 35, about_window_rect.y + 30))
             screen.blit(txt_about_game, (about_window_rect.x + 50, about_window_rect.y + 100))
             screen.blit(txt_about_game1, (about_window_rect.x + 50, about_window_rect.y + 123))
-            screen.blit(txt_about_me, (about_window_rect.x + 50, about_window_rect.y + 250))
-            screen.blit(txt_about_github, (about_window_rect.x + 50, about_window_rect.y + 273))
-            screen.blit(txt_about_replit, (about_window_rect.x + 50, about_window_rect.y + 293))
+            screen.blit(txt_about_me, (about_window_rect.x + 50, about_window_rect.y + 260))
+            screen.blit(txt_about_github, (about_window_rect.x + 50, about_window_rect.y + 283))
+            screen.blit(txt_about_replit, (about_window_rect.x + 50, about_window_rect.y + 303))
 
         pygame.display.flip()
         clock.tick(75)
@@ -373,6 +392,7 @@ while True:
                     word = choice(list(english_words_set))
                     Thread(target=time_run).start()
                 if button_exit_rect.collidepoint(event.pos):
+                    pygame.mixer.Sound.play(audio_click_button)
                     time = 0
                     points = 0
                     text = ""
@@ -434,7 +454,7 @@ while True:
             screen.blit(window_lose, window_lose_rect)
             screen.blit(button_retry, rect_button)
             screen.blit(txt_lose, (SCREEN_X/2 - 180, SCREEN_Y/2 - 120))
-            screen.blit(txt_last_points, (SCREEN_X/2 - 115, SCREEN_Y/2 - 30))
+            screen.blit(txt_last_points, (SCREEN_X/2 - 125, SCREEN_Y/2 - 30))
             screen.blit(txt_last_max_points, (SCREEN_X/2 - 205, SCREEN_Y/2 + 20))
             #print(window_lose_rect.x, window_lose_rect.y)  
         pygame.display.flip()

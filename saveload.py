@@ -12,7 +12,7 @@ def save(object=None, file="config.json"):
                 total[key] = value
         with open(file, "w") as write:
             json.dump(total, write, indent=4)
-    except FileNotFoundError:
+    except Exception:
         with open(file, "w") as write:
             json.dump(object, write, indent=4)
 
