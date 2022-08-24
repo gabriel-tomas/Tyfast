@@ -1,8 +1,9 @@
 {
-    "difficulty": "medium",
+    "difficulty": "hard",
+    "timesame": 4,
     "display": [
-        1440,
-        900,
-        true
+        800,
+        600,
+        false
     ]
 }

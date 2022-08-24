@@ -5,7 +5,7 @@ from english_words import english_words_set
 from random import choice
 import sys
 from update import update
-from saveload import save, load
+from saveload import save, load, save_score
 
 
 pygame.init()
@@ -25,6 +25,11 @@ if "difficulty" in load():
 else:
     difficulty = "easy"
 
+if "easy" in load("score.json"):
+    last_max_points = load("score.json")
+else:
+    last_max_points = {"easy":0, "medium":0, "hard":0}
+
 clock = pygame.time.Clock()
 input_active = False
 text = ""
@@ -37,14 +42,17 @@ font_last_points = pygame.font.Font("assets/font/font.otf", 40)
 font_loading_info = pygame.font.Font("assets/font/font.otf", 40)
 font_options = pygame.font.Font("assets/font/font.otf", 30)
 font_box_choice = pygame.font.Font("assets/font/font.otf", 25)
-input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect = update(SCREEN_X, SCREEN_Y)
+font_last_max_points = pygame.font.Font("assets/font/font.otf", 30)
+font_about_window = pygame.font.Font("assets/font/font.otf", 25)
+input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
 word = None
 option_state = False
+about_state = False
 game_run = False
 time = 0
 dec_time = 0
-time_to_same = 10
 difficulty_time = {"easy": 10, "medium":5, "hard":4}
+time_to_same = difficulty_time[difficulty]
 pos = []
 pos_n = 0
 loading = False
@@ -61,6 +69,14 @@ txt_loading_info_str = ""
 program_run = True
 dict_save = {}
 
+
+def max_score(difficulty):
+    last_max_points[difficulty] = points
+    #print(last_max_points)
+    list = save_score(last_max_points, difficulty)
+    return list
+
+
 def res_set(width=None, height=None, fullscreen=False):
     dict_save["display"] = [width, height, fullscreen]
     save(dict_save, "config.json")
@@ -70,7 +86,64 @@ def res_set(width=None, height=None, fullscreen=False):
         return pygame.display.set_mode([width, height], pygame.FULLSCREEN), width, height, pygame.transform.scale(option_fullscreen, (40, 40)), pygame.transform.scale(option_1920, (40, 40))
     marked, transparent = pygame.image.load("assets/buttons/button-windows-options/res-box-marked.png"), pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
     return pygame.display.set_mode([width, height]), width, height, pygame.transform.scale(marked, (40, 40)), pygame.transform.scale(transparent, (40, 40))
+
+
+
+def resolution_set(collid=False):
+    global input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, screen, SCREEN_X, SCREEN_Y, about_window, about_window_rect
     
+
+    if collid:
+        if option_box_fullscreen_rect.collidepoint(event.pos):
+            screen, SCREEN_X, SCREEN_Y, option_box_fullscreen, option_button_res_1920= res_set(display_info.current_w, display_info.current_h, fullscreen=True)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_192, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscree, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+        if option_button_res_800_rect.collidepoint(event.pos):
+            screen, SCREEN_X, SCREEN_Y, option_button_res_800, option_button_res_1280 = res_set(width=800, height=600)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, res_chang, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            option_button_res_1920 = option_button_res_1280
+        elif option_button_res_1280_rect.collidepoint(event.pos):
+            screen, SCREEN_X, SCREEN_Y, option_button_res_1280, option_button_res_800 = res_set(width=1280, height=720)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, res_change, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            option_button_res_1920 = option_button_res_800
+        elif option_button_res_1920_rect.collidepoint(event.pos):
+            screen, SCREEN_X, SCREEN_Y, option_button_res_1920, option_button_res_1280 = res_set(width=1920, height=1080)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, res_chang, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            option_button_res_800 = option_button_res_1280
+        return
+    if SCREEN_X == 800:
+        option_button_res_800 = pygame.image.load("assets/buttons/button-windows-options/res-box-marked.png")
+        option_button_res_800 = pygame.transform.scale(option_button_res_800, (40, 40))
+        #clear others
+        option_button_res_1280 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1280 = pygame.transform.scale(option_button_res_1280, (40, 40))
+        option_button_res_1920 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1920 = pygame.transform.scale(option_button_res_1920, (40, 40))
+    elif SCREEN_X == 1280:
+        option_button_res_1280 = pygame.image.load("assets/buttons/button-windows-options/res-box-marked.png")
+        option_button_res_1280 = pygame.transform.scale(option_button_res_1280, (40, 40))
+        #clear others
+        option_button_res_800 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_800 = pygame.transform.scale(option_button_res_800, (40, 40))
+        option_button_res_1920 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1920 = pygame.transform.scale(option_button_res_1920, (40, 40))
+    elif SCREEN_X == 1920:
+        option_button_res_1920 = pygame.image.load("assets/buttons/button-windows-options/res-box-marked.png")
+        option_button_res_1920 = pygame.transform.scale(option_button_res_1920, (40, 40))
+        #clear others
+        option_button_res_800 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_800 = pygame.transform.scale(option_button_res_800, (40, 40))
+        option_button_res_1280 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1280 = pygame.transform.scale(option_button_res_1280, (40, 40))
+    elif fullscreen:
+        option_box_fullscreen = pygame.image.load("assets/buttons/button-windows-options/res-box-marked.png")
+        option_box_fullscreen = pygame.transform.scale(option_box_fullscreen, (40, 40))
+        option_button_res_800 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_800 = pygame.transform.scale(option_button_res_800, (40, 40))
+        option_button_res_1280 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1280 = pygame.transform.scale(option_button_res_1280, (40, 40))
+        option_button_res_1920 = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
+        option_button_res_1920 = pygame.transform.scale(option_button_res_1920, (40, 40))
+
 
 def difficulty_set(collid=False):
     global option_button_box_easy, option_button_box_medium, option_button_box_hard, difficulty, time_to_same
@@ -107,6 +180,7 @@ def difficulty_set(collid=False):
             option_button_box_easy = pygame.image.load("assets/buttons/button-windows-options/box-transparent.png")
             option_button_box_easy = pygame.transform.scale(option_button_box_easy, (40, 40))
         dict_save["difficulty"] = difficulty
+        dict_save["timesame"] = time_to_same
         save(dict_save, "config.json")
         return
     if difficulty == "easy":
@@ -118,7 +192,6 @@ def difficulty_set(collid=False):
     if difficulty == "hard":
         option_button_box_hard = pygame.image.load("assets/buttons/button-windows-options/hard-box-marked.png")
         option_button_box_hard = pygame.transform.scale(option_button_box_hard, (40, 40))
-    
     
 
 def loading_time():
@@ -205,7 +278,7 @@ while True:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if rect_start_menu.collidepoint(event.pos) and option_state == False:
+                if rect_start_menu.collidepoint(event.pos) and option_state == False and about_state == False:
                     loading = True
                     Thread(target=loading_time).start()
                     Thread(target=txt_str_loading).start()
@@ -213,39 +286,28 @@ while True:
                     option_state = True
                 if exit_option_window_rect.collidepoint(event.pos):
                     option_state = False
-                print(option_state)
-                if option_state:
+                    about_state = False
+                if rect_about_menu.collidepoint(event.pos) and option_state == False:
+                    about_state = True
+                if option_state and about_state == False:
                     difficulty_set(True)
-                    if option_box_fullscreen_rect.collidepoint(event.pos):
-                        screen, SCREEN_X, SCREEN_Y, option_box_fullscreen, option_button_res_1920= res_set(display_info.current_w, display_info.current_h, fullscreen=True)
-                        input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_192, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscree, option_box_fullscreen_rect = update(SCREEN_X, SCREEN_Y)
-                    if option_button_res_800_rect.collidepoint(event.pos):
-                        screen, SCREEN_X, SCREEN_Y, option_button_res_800, option_button_res_1280 = res_set(width=800, height=600)
-                        input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, res_chang, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect = update(SCREEN_X, SCREEN_Y)
-                        option_button_res_1920 = option_button_res_1280
-                    elif option_button_res_1280_rect.collidepoint(event.pos):
-                        screen, SCREEN_X, SCREEN_Y, option_button_res_1280, option_button_res_800 = res_set(width=1280, height=720)
-                        input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, res_change, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect = update(SCREEN_X, SCREEN_Y)
-                        option_button_res_1920 = option_button_res_800
-                    elif option_button_res_1920_rect.collidepoint(event.pos):
-                        screen, SCREEN_X, SCREEN_Y, option_button_res_1920, option_button_res_1280 = res_set(width=1920, height=1080)
-                        input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, res_chang, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect = update(SCREEN_X, SCREEN_Y)
-                        option_button_res_800 = option_button_res_1280   
+                    resolution_set(True)
+
         txt_heading = font_heading.render("Tyfast", True, (82, 39, 39))
-        txt_dificulty = font_options.render("Difficulty", True, (255, 255, 255))
-        txt_easy = font_box_choice.render("Easy", True, (0, 255, 0))
-        txt_medium = font_box_choice.render("Medium", True, (226, 247, 18))
-        txt_hard = font_box_choice.render("Hard", True, (255, 0, 0))
-        txt_resolution = font_options.render("Resolution", True, (255, 255, 255))
-        txt_800 = font_box_choice.render("800x600", True, (200, 200, 200))
-        txt_1280 = font_box_choice.render("1280x720", True, (200, 200, 200))
-        txt_1920 = font_box_choice.render("1920x1080", True, (200, 200, 200))
-        txt_fullscreen = font_box_choice.render("Fullscreen", True, (200, 200, 200))
         screen.blit(start_menu, rect_start_menu)
         screen.blit(options_menu, rect_options_menu)
         screen.blit(about_menu, rect_about_menu)
         screen.blit(txt_heading, (SCREEN_X /2 - int(txt_heading.get_rect()[2]) + 130, SCREEN_Y / 2 - 250))
         if option_state:
+            txt_dificulty = font_options.render("Difficulty", True, (255, 255, 255))
+            txt_easy = font_box_choice.render("Easy", True, (0, 255, 0))
+            txt_medium = font_box_choice.render("Medium", True, (226, 247, 18))
+            txt_hard = font_box_choice.render("Hard", True, (255, 0, 0))
+            txt_resolution = font_options.render("Resolution", True, (255, 255, 255))
+            txt_800 = font_box_choice.render("800x600", True, (200, 200, 200))
+            txt_1280 = font_box_choice.render("1280x720", True, (200, 200, 200))
+            txt_1920 = font_box_choice.render("1920x1080", True, (200, 200, 200))
+            txt_fullscreen = font_box_choice.render("Fullscreen", True, (200, 200, 200))
             screen.blit(option_window, option_window_rect)
             screen.blit(exit_option_window, (option_window_rect.x + 35, option_window_rect.y + 30))
             screen.blit(txt_dificulty, (window_lose_rect.x - 5, window_lose_rect.y + 80))
@@ -264,7 +326,23 @@ while True:
             screen.blit(option_button_res_1920, option_button_res_1920_rect)
             screen.blit(txt_fullscreen, (window_lose_rect.x + 130, window_lose_rect.y + 202))
             screen.blit(option_box_fullscreen, option_box_fullscreen_rect)
-            difficulty_set()   
+            difficulty_set()
+            resolution_set()
+        if about_state:
+            txt_about_game = font_about_window.render("In this game you have to get the word right before it ", True, (255, 255, 255))
+            txt_about_game1 = font_about_window.render("reaches the selected time.", True, (255, 255, 255))
+            txt_about_me = font_about_window.render("See more about me:", True, (255, 255, 255))
+            # https://github.com/ratohg
+            txt_about_github = font_about_window.render("GitHub: https://github.com/ratohg", True, (51, 51, 51))
+            txt_about_replit = font_about_window.render("Replit: https://replit.com/@ratohg", True, (43, 50, 69))
+            screen.blit(about_window, about_window_rect)
+            screen.blit(exit_option_window, (about_window_rect.x + 35, about_window_rect.y + 30))
+            screen.blit(txt_about_game, (about_window_rect.x + 50, about_window_rect.y + 100))
+            screen.blit(txt_about_game1, (about_window_rect.x + 50, about_window_rect.y + 123))
+            screen.blit(txt_about_me, (about_window_rect.x + 50, about_window_rect.y + 250))
+            screen.blit(txt_about_github, (about_window_rect.x + 50, about_window_rect.y + 273))
+            screen.blit(txt_about_replit, (about_window_rect.x + 50, about_window_rect.y + 293))
+
         pygame.display.flip()
         clock.tick(75)
     #in game
@@ -318,6 +396,8 @@ while True:
                             list_dec_time.append(dec_time)
                             text = ""
                             points += 1
+                            last_max_points = max_score(difficulty)
+                            print(last_max_points)
                             word = choice(list(english_words_set))
                     if event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
@@ -326,9 +406,10 @@ while True:
         txt_surface = font.render(text, True, (255, 255, 255))
         txt_word = font.render(word, True, (255, 255, 255))
         txt_lose = font_lose.render("YOU'RE LOSE", True, (255, 255, 255))
-        txt_last_points = font_last_points.render(f"Points: {points}", True, (255, 255, 255))
+        txt_last_points = font_last_points.render(f"Points: {points} in {difficulty}", True, (255, 255, 255))
         txt_time = font_timer.render(str(time), True, (48, 48, 48))
         txt_points = font_point.render(str(points), True, (48, 48, 48))
+        txt_last_max_points = font_last_max_points.render(f"Max points in Easy:{last_max_points['easy']} Medium:{last_max_points['medium']} Hard:{last_max_points['hard']}", True, (255, 255, 255))
         width_box = max(450, txt_surface.get_width() + 10)
         input_box_rect.w = width_box
         screen.blit(input_box, input_box_rect)
@@ -353,8 +434,9 @@ while True:
             screen.blit(window_lose, window_lose_rect)
             screen.blit(button_retry, rect_button)
             screen.blit(txt_lose, (SCREEN_X/2 - 180, SCREEN_Y/2 - 120))
-            screen.blit(txt_last_points, (SCREEN_X/2 - 70, SCREEN_Y/2 - 20))
-            print(window_lose_rect.x, window_lose_rect.y)  
+            screen.blit(txt_last_points, (SCREEN_X/2 - 115, SCREEN_Y/2 - 30))
+            screen.blit(txt_last_max_points, (SCREEN_X/2 - 205, SCREEN_Y/2 + 20))
+            #print(window_lose_rect.x, window_lose_rect.y)  
         pygame.display.flip()
         clock.tick(75)
     elif loading:
