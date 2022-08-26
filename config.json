@@ -1,9 +1,10 @@
 {
-    "difficulty": "hard",
-    "timesame": 4,
+    "difficulty": "easy",
+    "timesame": 10,
     "display": [
         800,
         600,
         false
-    ]
+    ],
+    "volume": 363
 }

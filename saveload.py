@@ -6,7 +6,8 @@ def save(object=None, file="config.json"):
         content = load()
         total = {}
         for key, value in content.items():
-            if key in object:
+            print(key in object and value not in object)
+            if key in object and value not in object:
                 total = object
             else:
                 total[key] = value

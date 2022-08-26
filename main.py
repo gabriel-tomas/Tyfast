@@ -7,7 +7,6 @@ from saveload import save, load, save_score
 import sys, pygame, webbrowser
 
 
-
 pygame.init()
 display_info = pygame.display.Info()
 if "display" in load():
@@ -47,7 +46,7 @@ font_last_max_points = pygame.font.Font("assets/font/font.otf", 30)
 font_about_window = pygame.font.Font("assets/font/font.otf", 25)
 audio_click_button = pygame.mixer.Sound("assets/audios/options-button.wav")
 audio_click_button_game = pygame.mixer.Sound("assets/audios/click-button.wav")
-input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
 word = None
 option_state = False
 about_state = False
@@ -72,6 +71,13 @@ txt_loading_info_str = ""
 program_run = True
 dict_save = {}
 
+def volume_set(value):
+    OldRange = (647 - 298)  
+    NewRange = (0 - 1)
+    NewValue = abs(((value - 298) * NewRange) / OldRange)
+    print(NewValue)
+    audio_click_button.set_volume(NewValue)
+    return NewValue
 
 def max_score(difficulty):
     last_max_points[difficulty] = points
@@ -94,24 +100,24 @@ def res_set(width=None, height=None, fullscreen=False):
 
 
 def resolution_set(collid=False):
-    global input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, screen, SCREEN_X, SCREEN_Y, about_window, about_window_rect
+    global input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, screen, SCREEN_X, SCREEN_Y, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect
     
 
     if collid:
         if option_box_fullscreen_rect.collidepoint(event.pos):
             screen, SCREEN_X, SCREEN_Y, option_box_fullscreen, option_button_res_1920= res_set(display_info.current_w, display_info.current_h, fullscreen=True)
-            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_192, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscree, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_192, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscree, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
         if option_button_res_800_rect.collidepoint(event.pos):
             screen, SCREEN_X, SCREEN_Y, option_button_res_800, option_button_res_1280 = res_set(width=800, height=600)
-            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, res_chang, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, res_chang, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
             option_button_res_1920 = option_button_res_1280
         elif option_button_res_1280_rect.collidepoint(event.pos):
             screen, SCREEN_X, SCREEN_Y, option_button_res_1280, option_button_res_800 = res_set(width=1280, height=720)
-            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, res_change, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, res_change, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
             option_button_res_1920 = option_button_res_800
         elif option_button_res_1920_rect.collidepoint(event.pos):
             screen, SCREEN_X, SCREEN_Y, option_button_res_1920, option_button_res_1280 = res_set(width=1920, height=1080)
-            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, res_chang, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect = update(SCREEN_X, SCREEN_Y)
+            input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect, exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, res_chang, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
             option_button_res_800 = option_button_res_1280
         return
     if SCREEN_X == 800:
@@ -199,7 +205,7 @@ def difficulty_set(collid=False):
     if difficulty == "hard":
         option_button_box_hard = pygame.image.load("assets/buttons/button-windows-options/hard-box-marked.png")
         option_button_box_hard = pygame.transform.scale(option_button_box_hard, (40, 40))
-    
+
 
 def loading_time():
     global time_loading, game_run, loading, word, input_active
@@ -275,6 +281,11 @@ def time_run():
             break
         
 #run game
+if "volume" in load():
+    button_bar_volume_rect.x = load()["volume"]
+    print(button_bar_volume_rect.x)
+    print(volume_set(button_bar_volume_rect.x))
+
 txt_about_github = font_about_window.render("GitHub: https://github.com/ratohg", True, (51, 51, 51))
 txt_about_replit = font_about_window.render("Replit: https://replit.com/@ratohg", True, (51, 51, 51))
 while True:
@@ -311,7 +322,11 @@ while True:
                         webbrowser.open("https://github.com/ratohg")
                     elif txt_about_replit.get_rect(center=(about_window_rect.x + 210, about_window_rect.y + 316)).collidepoint(event.pos):
                         webbrowser.open("https://replit.com/@ratohg")
-                    
+            if option_box_bar_volume_rect.collidepoint(pygame.mouse.get_pos()) and any(pygame.mouse.get_pressed()):
+                button_bar_volume_rect.x = pygame.mouse.get_pos()[0]
+                volume_set(button_bar_volume_rect.x)
+                dict_save["volume"] = button_bar_volume_rect.x
+                save(dict_save)
         txt_heading = font_heading.render("Tyfast", True, (82, 39, 39))
         screen.blit(start_menu, rect_start_menu)
         screen.blit(options_menu, rect_options_menu)
@@ -327,6 +342,7 @@ while True:
             txt_1280 = font_box_choice.render("1280x720", True, (200, 200, 200))
             txt_1920 = font_box_choice.render("1920x1080", True, (200, 200, 200))
             txt_fullscreen = font_box_choice.render("Fullscreen", True, (200, 200, 200))
+            txt_volume = font_options.render("Volume", True, (255, 255, 255))
             screen.blit(option_window, option_window_rect)
             screen.blit(exit_option_window, (option_window_rect.x + 35, option_window_rect.y + 30))
             screen.blit(txt_dificulty, (window_lose_rect.x - 5, window_lose_rect.y + 80))
@@ -345,6 +361,9 @@ while True:
             screen.blit(option_button_res_1920, option_button_res_1920_rect)
             screen.blit(txt_fullscreen, (window_lose_rect.x + 130, window_lose_rect.y + 202))
             screen.blit(option_box_fullscreen, option_box_fullscreen_rect)
+            screen.blit(txt_volume, (window_lose_rect.x - 5, window_lose_rect.y + 250))
+            screen.blit(option_box_bar_volume, option_box_bar_volume_rect)
+            screen.blit(button_bar_volume, button_bar_volume_rect)
             difficulty_set()
             resolution_set()
         if about_state:
