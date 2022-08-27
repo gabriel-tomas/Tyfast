@@ -79,7 +79,9 @@ def volume_set(value):
     NewRange = (0 - 1)
     NewValue = abs(((value - 298) * NewRange) / OldRange)
     print(NewValue)
-    audio_click_button.set_volume(NewValue)
+    list_audios = [audio_click_button, audio_win_word, audio_lose_word]
+    for audio in list_audios:
+        audio.set_volume(NewValue)
     return NewValue
 
 def max_score(difficulty):
@@ -274,12 +276,13 @@ def time_run():
             break
         if game_run:
             time += 1
-            sleep(1)
+            print(f"{time} -{dec_time} {time_to_same}")
             if dec_time:
                 time -= dec_time
-                dec_time = False
+                dec_time = None
             if time == time_to_same:
                 break
+            sleep(1)
         else:
             break
         
@@ -425,7 +428,7 @@ while True:
             #verify keyboard click
             if event.type == pygame.KEYDOWN:
                 if input_active:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN and time != time_to_same:
                         if text.strip() == word and time != time_to_same:
                             list_words_same.append(word)
                             pos.append(pos_n)
@@ -447,6 +450,16 @@ while True:
                         elif time != time_to_same and len(text) > 0:
                             color_word = (255, 0, 0)
                             audio_lose_word.play()
+                    if event.key == pygame.K_RETURN and time == time_to_same:
+                        input_active = True
+                        time = 0
+                        points = 0
+                        text = ""
+                        list_words_same.clear()
+                        list_dec_time.clear()
+                        word = choice(list(english_words_set))
+                        color_word = (255, 255, 255)
+                        Thread(target=time_run).start()
                     if event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
                         color_word = (255, 255, 255)
