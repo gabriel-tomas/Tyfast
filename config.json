@@ -2,9 +2,9 @@
     "difficulty": "easy",
     "timesame": 10,
     "display": [
-        800,
-        600,
-        false
+        1440,
+        900,
+        true
     ],
-    "volume": 363
+    "volume": 654
 }
