@@ -45,7 +45,8 @@ font_box_choice = pygame.font.Font("assets/font/font.otf", 25)
 font_last_max_points = pygame.font.Font("assets/font/font.otf", 30)
 font_about_window = pygame.font.Font("assets/font/font.otf", 25)
 audio_click_button = pygame.mixer.Sound("assets/audios/options-button.wav")
-audio_click_button_game = pygame.mixer.Sound("assets/audios/click-button.wav")
+audio_win_word = pygame.mixer.Sound("assets/audios/win-word.wav")
+audio_lose_word = pygame.mixer.Sound("assets/audios/lose-word.wav")
 input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
 word = None
 option_state = False
@@ -70,6 +71,8 @@ time_loading = 0
 txt_loading_info_str = ""
 program_run = True
 dict_save = {}
+color_word = (255, 255, 255)
+
 
 def volume_set(value):
     OldRange = (647 - 298)  
@@ -273,7 +276,7 @@ def time_run():
             time += 1
             sleep(1)
             if dec_time:
-                time += -dec_time
+                time -= dec_time
                 dec_time = False
             if time == time_to_same:
                 break
@@ -409,6 +412,7 @@ while True:
                     list_words_same.clear()
                     list_dec_time.clear()
                     word = choice(list(english_words_set))
+                    color_word = (255, 255, 255)
                     Thread(target=time_run).start()
                 if button_exit_rect.collidepoint(event.pos):
                     pygame.mixer.Sound.play(audio_click_button)
@@ -438,11 +442,20 @@ while True:
                             last_max_points = max_score(difficulty)
                             print(last_max_points)
                             word = choice(list(english_words_set))
+                            audio_win_word.play()
+                            color_word = (255, 255, 255)
+                        elif time != time_to_same and len(text) > 0:
+                            color_word = (255, 0, 0)
+                            audio_lose_word.play()
                     if event.key == pygame.K_BACKSPACE:
                         text = text[:-1]
+                        color_word = (255, 255, 255)
                     else:
+                        last_txt = text
                         text += event.unicode.strip()
-        txt_surface = font.render(text, True, (255, 255, 255))
+                        if last_txt != text:
+                            color_word = (255, 255, 255)
+        txt_surface = font.render(text, True, color_word)
         txt_word = font.render(word, True, (255, 255, 255))
         txt_lose = font_lose.render("YOU'RE LOSE", True, (255, 255, 255))
         txt_last_points = font_last_points.render(f"Points: {points} in {difficulty}", True, (255, 255, 255))
