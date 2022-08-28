@@ -47,13 +47,14 @@ font_about_window = pygame.font.Font("assets/font/font.otf", 25)
 audio_click_button = pygame.mixer.Sound("assets/audios/options-button.wav")
 audio_win_word = pygame.mixer.Sound("assets/audios/win-word.wav")
 audio_lose_word = pygame.mixer.Sound("assets/audios/lose-word.wav")
+audio_game_over = pygame.mixer.Sound("assets/audios/game-over.wav")
 input_box, input_box_rect, info_box_word, info_box_word_rect, button_retry, rect_button, window_lose, window_lose_rect, bg_start, bg_start1, bg1, bg2, start_menu, rect_start_menu, options_menu, rect_options_menu, about_menu, rect_about_menu, option_window, option_window_rect,exit_option_window, exit_option_window_rect, option_button_box, option_button_box_easy, option_button_box_medium, option_button_box_hard, option_button_res_800, option_button_res_1280, option_button_res_1920, option_button_res_800_rect, option_button_res_1280_rect, option_button_res_1920_rect, option_button_box_easy_rect, option_button_box_medium_rect, option_button_box_hard_rect, bg_loading, bg_loading1, button_exit, button_exit_rect, option_box_fullscreen, option_box_fullscreen_rect, about_window, about_window_rect, option_box_bar_volume, option_box_bar_volume_rect, button_bar_volume, button_bar_volume_rect = update(SCREEN_X, SCREEN_Y)
 word = None
 option_state = False
 about_state = False
 game_run = False
 time = 0
-dec_time = 0
+dec_time = []
 difficulty_time = {"easy": 10, "medium":5, "hard":4}
 time_to_same = difficulty_time[difficulty]
 pos = []
@@ -79,7 +80,7 @@ def volume_set(value):
     NewRange = (0 - 1)
     NewValue = abs(((value - 298) * NewRange) / OldRange)
     print(NewValue)
-    list_audios = [audio_click_button, audio_win_word, audio_lose_word]
+    list_audios = [audio_click_button, audio_win_word, audio_lose_word, audio_game_over]
     for audio in list_audios:
         audio.set_volume(NewValue)
     return NewValue
@@ -278,11 +279,13 @@ def time_run():
             time += 1
             print(f"{time} -{dec_time} {time_to_same}")
             if dec_time:
-                time -= dec_time
-                dec_time = None
+                for dec in dec_time:
+                    time -= dec
+                dec_time.clear()
             if time == time_to_same:
+                audio_game_over.play()
                 break
-            sleep(1)
+            sleep(10)
         else:
             break
         
@@ -434,12 +437,13 @@ while True:
                             pos.append(pos_n)
                             pos_n += 20
                             if len(word) >= 9:
-                                dec_time = 3
+                                dec_time.append(3)
                             elif len(word) >= 7:
-                                dec_time = 2
+                                dec_time.append(2)
                             else:
-                                dec_time = 1
-                            list_dec_time.append(dec_time)
+                                dec_time.append(1)
+                            print(f"\033[32m{dec_time[-1]}\033[m")
+                            list_dec_time.append(dec_time[-1])
                             text = ""
                             points += 1
                             last_max_points = max_score(difficulty)
