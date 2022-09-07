@@ -4,6 +4,7 @@ from english_words import english_words_set
 from random import choice
 from update import update
 from saveload import save, load, save_score
+from bonus import Decrease_time
 import sys, pygame, webbrowser
 
 
@@ -56,7 +57,7 @@ game_run = False
 time = 0
 dec_time = []
 difficulty_time = {"easy": 10, "medium":5, "hard":4}
-time_to_same = difficulty_time[difficulty]
+time_to_same = 50#difficulty_time[difficulty]
 pos = []
 pos_n = 0
 loading = False
@@ -73,13 +74,26 @@ txt_loading_info_str = ""
 program_run = True
 dict_save = {}
 color_word = (255, 255, 255)
+bonus_items = Decrease_time(SCREEN_X, SCREEN_Y)
 
 
 def volume_set(value):
-    OldRange = (647 - 298)  
+    if SCREEN_X <= 800:
+        x_right = 647
+        x_left = 298
+    elif SCREEN_X <= 1280:
+        x_right = 887
+        x_left = 538
+    elif SCREEN_X <= 1920:
+        x_right = 1207
+        x_left = 858
+    elif fullscreen:
+        x_right = 1
+        x_left = 0
+    OldRange = (x_right - x_left)  
     NewRange = (0 - 1)
-    NewValue = abs(((value - 298) * NewRange) / OldRange)
-    print(NewValue)
+    NewValue = abs(((value - x_left) * NewRange) / OldRange)
+    print("New volume:", NewValue)
     list_audios = [audio_click_button, audio_win_word, audio_lose_word, audio_game_over]
     for audio in list_audios:
         audio.set_volume(NewValue)
@@ -278,6 +292,7 @@ def time_run():
         if game_run:
             time += 1
             print(f"{time} -{dec_time} {time_to_same}")
+            bonus_items.chance_set_bns()
             if dec_time:
                 for dec in dec_time:
                     time -= dec
@@ -285,7 +300,7 @@ def time_run():
             if time == time_to_same:
                 audio_game_over.play()
                 break
-            sleep(10)
+            sleep(1)
         else:
             break
         
@@ -472,6 +487,8 @@ while True:
                         text += event.unicode.strip()
                         if last_txt != text:
                             color_word = (255, 255, 255)
+        if bonus_items.run == True:
+            bonus_items.blt_img(screen)
         txt_surface = font.render(text, True, color_word)
         txt_word = font.render(word, True, (255, 255, 255))
         txt_lose = font_lose.render("YOU'RE LOSE", True, (255, 255, 255))
