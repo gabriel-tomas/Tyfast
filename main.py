@@ -443,6 +443,10 @@ while True:
                     list_words_same.clear()
                     list_dec_time.clear()
                     game_run = False
+                if bonus_items.rect.collidepoint(event.pos) and bonus_items.clicked == False:
+                    print(f"\033[33m{bonus_items.time}\033[m")
+                    time += -bonus_items.time
+                    bonus_items.clicked = True
             #verify keyboard click
             if event.type == pygame.KEYDOWN:
                 if input_active:

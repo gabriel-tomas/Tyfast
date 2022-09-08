@@ -1,6 +1,6 @@
 {
-    "difficulty": "medium",
-    "timesame": 50,
+    "difficulty": "easy",
+    "timesame": 10,
     "display": [
         800,
         600,
